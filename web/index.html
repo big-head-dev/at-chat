@@ -1,11 +1,135 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+      integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l"
+      crossorigin="anonymous"
+    />
     <title>AT-Chat</title>
-</head>
-<body>
-    
-</body>
+  </head>
+  <body class="d-flex flex-column h-100">
+    <!-- Begin page content -->
+    <main role="main" class="flex-shrink-0">
+      <div class="container">
+        <h1 class="mt-5">AT-Chat</h1>
+        <div class="chat">Chat window</div>
+      </div>
+    </main>
+
+    <footer class="footer mt-auto py-3 fixed-bottom bg-secondary">
+      <div class="d-flex justify-content-around">
+        <div>
+          <button type="button" id="joinButton" class="btn btn-primary">
+            Join
+          </button>
+          <button type="button" id="leaveButton" class="btn btn-danger">
+            Leave
+          </button>
+        </div>
+        <div class="form-row align-items-center">
+          <div class="col-auto">
+            <input
+              type="text"
+              class="form-control"
+              id="messageInput"
+              placeholder="What do you want to say?"
+            />
+          </div>
+          <div class="col-auto">
+            <button type="button" id="sendButton" class="btn btn-success">
+              Send
+            </button>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script
+      src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns"
+      crossorigin="anonymous"
+    ></script>
+    <script type="text/javascript">
+      $(function () {
+        let socket
+
+        const isSocketOpen = function() {
+          return (
+            socket &&
+            (socket.readyState == socket.OPEN)
+          )
+        }
+
+        const joinRoom = function () {
+          if (!isSocketOpen()) {
+            //manually setting cookie with username
+            var username = 'guest'
+            // TODO: set this with the username prompt
+            document.cookie = 'atchat-username=' + username + ';'
+            socket = new WebSocket('ws://' + document.location.host + '/chat')
+
+            socket.onerror = sockErrorHandler
+            socket.onopen = sockOpenHandler
+            socket.onmessage = sockMessageHandler
+            socket.onclose = sockCloseHandler
+          }
+        }
+
+        const sockErrorHandler = function (e) {
+          console.log(e)
+        }
+        const sockOpenHandler = function (e) {
+          console.log(e)
+        }
+        const sockMessageHandler = function (e) {
+          console.log(e)
+        }
+        const sockCloseHandler = function (e) {
+          console.log(e)
+          socket = null
+        }
+
+        const leaveRoom = function () {
+          if (isSocketOpen()) {
+            socket.close(1000, 'Leaving')
+            sockCloseHandler()
+          }
+        }
+
+        const sendMessage = function () {
+          const messageInput = $('input#messageInput')
+          let message = messageInput.val()
+          if (message && message.length > 0) {
+            if(isSocketOpen())
+              socket.send(message)
+          } else {
+            messageInput.focus()
+          }
+        }
+
+        window.onload = function () {
+          if (!window['WebSocket']) {
+            console.log('WebSockets not supported.')
+            return
+          }
+        }
+        window.onbeforeunload = function () {
+          leaveRoom()
+        }
+
+        $('#joinButton').click(joinRoom)
+        $('#leaveButton').click(leaveRoom)
+        $('#sendButton').click(sendMessage)
+      })
+    </script>
+  </body>
 </html>
