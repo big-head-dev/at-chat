@@ -41,13 +41,14 @@ func main() {
 		//upgrade connection
 		conn, err := upgrader.Upgrade(w, r, nil)
 		if err != nil {
-			log.Panicln("Upgrader failed ", err)
+			log.Println("Upgrader failed ", err)
 			return
 		}
-		fmt.Println("User connected ", conn.RemoteAddr())
+		log.Println("User connected ", conn.RemoteAddr())
 
 		//create user
-		user := &User{cookie.Value, conn}
+		user := &User{cookie.Value, conn, room}
+		go user.start()
 
 		//add to room
 		room.join <- user
@@ -58,23 +59,4 @@ func main() {
 	if err := http.ListenAndServe(fmt.Sprint(":", *port), nil); err != nil {
 		log.Fatal("http.ListenAndServe ", err)
 	}
-}
-
-// handleWebSocketRequests listens for sock requests and upgrades the connection
-func handleWebSocketRequests(w http.ResponseWriter, r *http.Request) {
-
-	// joinedMessage := StatusMessage{"_", fmt.Sprintf("%s has entered the chat room.", user.username)}
-	// b, err := joinedMessage.toJSON()
-	// if err != nil {
-	// 	log.Panicln("Could not marshal ChatMessage ", err)
-	// 	return
-	// }
-	// if err = user.ws.WriteMessage(websocket.TextMessage, b); err != nil {
-	// 	log.Panicln("Error sending message ", err)
-	// } else {
-	// 	log.Println("message sent ", joinedMessage)
-	// }
-
-	// user.ws.ReadMessage()
-
 }

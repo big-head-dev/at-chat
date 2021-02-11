@@ -7,15 +7,15 @@ Create a chat application using golang and websockets that supports multiple use
 - [✔] http listener - root
 - [✔] http listener - socks
 - [✔] retrieve username
-- [⚙] client object
-- [⚙] room object
-- [⚙] broadcast status messages
-- [⚙] read message from user
-- [⚙] broadcast message from user
+- [✔] client object
+- [✔] room object
+- [✔] broadcast status messages
+- [✔] read message from user
+- [✔] broadcast message from user
 - [] save user message to file
 - [] read messages to new user writer on join
-- [] client-side disconnect
-- [] handle heartbeat
+- [✔] client-side disconnect
+- [?] handle heartbeat
 - [] unique usernames
 ### ui
 - [✔] message box
@@ -24,4 +24,9 @@ Create a chat application using golang and websockets that supports multiple use
 - [✔] leave button
 - [✔] message input
 - [✔] state logic
-- [] handle heartbeat
+- [?] handle heartbeat
+
+## Limitations, Caveats, Concerns
+
+- Doesn't handle message time very robustly; just visual
+- I think the write handlers could be done more efficently

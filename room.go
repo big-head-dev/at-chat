@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 )
 
 // Room object to manage users
@@ -28,15 +29,16 @@ func (r Room) start() {
 		select {
 		case user := <-r.join:
 			r.users[user.username] = user
-			fmt.Println("Room.join - user added ", user.username)
-			fmt.Println("Now hosting users ", len(r.users))
+			log.Println("Room.join - user added", user.username)
+			log.Println("Now hosting users", len(r.users))
 			r.broadcastStatus(newStatusMessage(fmt.Sprintf("%s has joined.", user.username)))
 			r.sendPreviousMessagesToUser(user.username)
 		case user := <-r.leave:
 			if u, ok := r.users[user.username]; ok {
 				u.disconnect()
 				delete(r.users, u.username)
-				fmt.Println("Room.leave - user disconnected and removed", user.username)
+				log.Println("Room.leave - user disconnected and removed", user.username)
+				log.Println("Now hosting users", len(r.users))
 				r.broadcastStatus(newStatusMessage(fmt.Sprintf("%s has left.", u.username)))
 			}
 		case message := <-r.incoming:
@@ -61,5 +63,5 @@ func (r Room) broadcastChatMessage(m ChatMessage) {
 
 // TODO: sends saved chat messages to newly connected users
 func (r Room) sendPreviousMessagesToUser(username string) {
-	fmt.Println("Send previous messages to user", username)
+	log.Println("Send previous messages to user", username)
 }

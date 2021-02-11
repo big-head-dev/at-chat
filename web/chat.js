@@ -1,15 +1,15 @@
 let socket
 let chatUsername
 
-const isSocketOpen = function () {
+const isSocketOpen = () => {
   return socket && socket.readyState == socket.OPEN
 }
 
-const sockOpenHandler = function (e) {
+const sockOpenHandler = (e) => {
   // pushMessage({time: "", username: "", message: "Connected..."})
   // console.log(e)
 }
-const sockMessageHandler = function (e) {
+const sockMessageHandler = (e) => {
   // handle message types and create messages in chatwindow
   const sockMessage = JSON.parse(e.data)
   console.debug(sockMessage)
@@ -31,19 +31,26 @@ const sockMessageHandler = function (e) {
   }
   
 }
-const sockCloseHandler = function (e) {
-  pushMessage({time: "", username: "", message: "You have been disconnected from the chat room."})
-  console.log(e)
-  socket = null
+const sockCloseHandler = (e) => {
+  switch (e.code) {
+    case 1000:
+      pushMessage({time: "", username: "", message: "You have left the chat room."})
+      break;
+    default:
+      pushMessage({time: "", username: "", message: "You have been disconnected from the chat room. " + e.code})
+      break;
+  }
+  // socket = null
   clearCookie()
   flipInputPanels(false)
 }
 
-const joinRoom = function (username) {
+const joinRoom = (username) => {
   if (!isSocketOpen()) {
     // set this with the username prompt
     setCookie(username)
     socket = new WebSocket('ws://' + document.location.host + '/chat')
+    clearChatWindow()
     flipInputPanels(true)
     // socket.onerror = sockErrorHandler
     socket.onopen = sockOpenHandler
@@ -52,14 +59,13 @@ const joinRoom = function (username) {
   }
 }
 
-const leaveRoom = function () {
+const leaveRoom = () => {
   if (isSocketOpen()) {
-    socket.close()
-    sockCloseHandler()
+    socket.close(1000, 'user leaving')
   }
 }
 
-const sendMessage = function (message) {
+const sendMessage = (message) => {
   if (isSocketOpen()) {
     socket.send(message)
   }
@@ -67,38 +73,40 @@ const sendMessage = function (message) {
 
 // DOM methods
 
-const clearCookie = function () {
+const clearCookie = () => {
   document.cookie = ''
 }
 
-const setCookie = function (username) {
+const setCookie = (username) => {
   document.cookie = 'atchat-username=' + username + '; '
 }
 
-window.onload = function () {
+window.onload = () => {
   if (!window['WebSocket']) {
     console.log('WebSockets not supported.')
     return
   }
 }
-window.onbeforeunload = function () {
-  leaveRoom()
-}
+// window.onbeforeunload = function () {
+//   leaveRoom()
+// }
 
-const flipInputPanels = function (showMessagePanel) {
+const flipInputPanels = (showMessagePanel) => {
   var messagePanel = document.getElementById('messsagePanel')
   var joinPanel = document.getElementById('joinPanel')
 
   if (showMessagePanel) {
     messagePanel.classList.remove('hidethis')
     joinPanel.classList.add('hidethis')
+    //focus input
+    document.getElementById('messageInput').focus()
   } else {
     messagePanel.classList.add('hidethis')
     joinPanel.classList.remove('hidethis')
   }
 }
 
-const joinButtonClick = function () {
+const joinButtonClick = () => {
   var usernameInput = document.getElementById('usernameInput')
   var usernameDisplay = document.getElementById('userProfileUsername')
   var username = usernameInput.value
@@ -110,13 +118,13 @@ const joinButtonClick = function () {
   }
 }
 
-const leaveButtonClick = function () {
+const leaveButtonClick = () => {
   if (confirm('Are you sure you want to leave the chat room?')) {
     leaveRoom()
   }
 }
 
-const sendButtonClick = function () {
+const sendButtonClick = () => {
   const messageInput = document.getElementById('messageInput')
   let message = messageInput.value
   if (message && message.length > 0) {
@@ -127,7 +135,7 @@ const sendButtonClick = function () {
 }
 
 // added the message to the dom, manages scrolling
-const pushMessage = function(chatMessage) {
+const pushMessage = (chatMessage) => {
   const chatWindow = document.getElementById('chatWindow')
   const { time, username, message } = chatMessage
 
@@ -139,7 +147,7 @@ const pushMessage = function(chatMessage) {
 }
 
 // creates the message html
-const createMessageHtml = function(time, username, message) {
+const createMessageHtml = (time, username, message) => {
   // <div class="message">
   //   <span class="message-time">4:45</span>
   //   <span class="message-username">John444asd:</span>
@@ -168,3 +176,22 @@ const createMessageHtml = function(time, username, message) {
   newMessageDiv.appendChild(newMessageTextP)
   return newMessageDiv
 }
+
+const clearChatWindow = () => {
+  const chatWindow = document.getElementById('chatWindow')
+  while (chatWindow.firstChild) {
+    chatWindow.removeChild(chatWindow.lastChild);
+  }
+}
+
+// listeners
+
+const onEnterKey = (e, next) => {
+  if('Enter' === e.key) {
+    next()
+  }
+  return
+}
+
+document.getElementById('usernameInput').addEventListener("keyup", e => onEnterKey(e, joinButtonClick))
+document.getElementById('messageInput').addEventListener('keyup', e => onEnterKey(e, sendButtonClick))
