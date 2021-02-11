@@ -1,0 +1,176 @@
+@import './reboot.css';
+
+/* page structure */
+
+body {
+  display: grid;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background-color: #e5e7eb;
+}
+
+main {
+  overflow-y: scroll;
+  overflow-x: visible;
+  background-color: #9ca3af;
+  height: 85vh;
+}
+
+footer {
+  background-color: #4b5563;
+  color: white;
+  height: 15vh;
+}
+
+/* components */
+
+/* chat window messages  */
+.message {
+  display: flex;
+  justify-content: flex-start;
+  background-color: whitesmoke;
+  border-radius: 0.5rem;
+  margin: 0.5rem;
+  padding: 0.5rem;
+}
+
+.message p {
+  margin: 0;
+  padding: 0 0.3rem;
+}
+
+.message-time {
+  font-weight: lighter;
+  padding: 0 0.3rem;
+}
+
+.message-username {
+  font-weight: 500;
+  color: #1e40af;
+  padding: 0 0.3rem;
+}
+
+.footer-panel {
+  display: flex;
+  align-items: center;
+  margin: 0.5rem 1rem;
+}
+
+/* join panel */
+
+.join-panel {
+  justify-content: space-between;
+}
+
+.welcome {
+  font-weight: 500;
+}
+
+.join-input-area {
+  display: flex;
+  flex-wrap: nowrap;
+  width: 60%;
+}
+
+.join-input-area input[type='text'] {
+  width: 100%;
+}
+
+/* message panel */
+
+.user-profile {
+  display: flex;
+  align-items: center;
+}
+
+.user-profile span {
+  margin-right: 0.2rem;
+}
+
+.message-input-area {
+  display: flex;
+  flex-wrap: nowrap;
+  width: 100%;
+}
+
+.message-input-area input[type='text'] {
+  width: 100%;
+}
+
+.message-input-area button {
+  box-sizing: border-box;
+  justify-self: end;
+}
+
+/* common */
+
+.btn {
+  line-height: 2px;
+  display: inline-block;
+  border: none;
+  text-align: center;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  margin: 0.1rem;
+  color: white;
+  font-weight: 500;
+}
+
+.btn-wide {
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+.bg-primary {
+  background-color: #3b82f6;
+}
+
+button.bg-primary:focus {
+  background-color: hsl(217, 91%, 70%);
+}
+
+button.bg-primary:active {
+  background-color: hsl(217, 91%, 80%);
+}
+
+.bg-success {
+  background-color: #10b981;
+}
+
+button.bg-success:focus {
+  background-color: hsl(160, 84%, 49%);
+}
+
+button.bg-success:active {
+  background-color: hsl(160, 84%, 59%);
+}
+
+.bg-danger {
+  background-color: #ef4444;
+}
+
+button.bg-danger:focus {
+  background-color: hsl(0, 84%, 70%);
+}
+
+button.bg-danger:active {
+  background-color: hsl(0, 84%, 80%);
+}
+
+
+.hidethis {
+  display: none;
+}
+
+input[type='text'] {
+  background-color: white;
+  border: 2px solid white;
+  box-sizing: border-box;
+  border-radius: 2px;
+  transition: 0.5s;
+  outline: none;
+}
+input[type='text']:focus {
+  border: 2px solid #10b981;
+}
