@@ -44,7 +44,13 @@ func main() {
 			log.Println("Upgrader failed ", err)
 			return
 		}
-		log.Println("User connected ", conn.RemoteAddr())
+
+		// deny already taken usernames
+		if _, ok := room.users[cookie.Value]; ok {
+			log.Println("Username already connected", cookie.Value)
+			conn.Close()
+			return
+		}
 
 		//create user
 		user := &User{cookie.Value, conn, room}

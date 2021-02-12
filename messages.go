@@ -31,9 +31,3 @@ func newChatMessage(username string, message string) ChatMessage {
 		Message:  message,
 	}
 }
-
-// ChatMessages for sending a collection of text messages
-type ChatMessages struct {
-	Type     string        `json:"type"`
-	Messages []ChatMessage `json:"messages"`
-}

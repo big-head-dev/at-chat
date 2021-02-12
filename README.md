@@ -16,7 +16,7 @@ Create a chat application using golang and websockets that supports multiple use
 - [⚙] read messages to new user writer on join
 - [✔] client-side disconnect
 - [?] handle heartbeat
-- [] unique usernames
+- [✔] unique usernames
 ### ui
 - [✔] message box
 - [] user list
@@ -28,5 +28,8 @@ Create a chat application using golang and websockets that supports multiple use
 
 ## Limitations, Caveats, Concerns
 
-- Doesn't handle message time very robustly; just visual
+- Sending messages from the client is primitive (text string only)
+- It doesn't handle message time very robustly; just visual
 - I think the write handlers could be done more efficently (golang knowledge)
+- Using file io instead of redis/db to limit requirements for setup
+  - file stores for the duration of the go run

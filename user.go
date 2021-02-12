@@ -14,11 +14,11 @@ type User struct {
 }
 
 func (u User) start() {
+	defer u.disconnect()
 	for {
 		t, p, err := u.ws.ReadMessage()
-		log.Println("ReadMessage ", u.username, t, p, err)
 		if err != nil {
-			log.Println("ReadMessage error, disconnecting user")
+			log.Println("ReadMessage error ", u.username, t, p, err)
 			u.r.leave <- &u
 			return
 		}
