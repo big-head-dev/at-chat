@@ -12,8 +12,6 @@ body {
 
 main {
   display: flex;
-  overflow-y: scroll;
-  overflow-x: hidden;
   background-color: #9ca3af;
   height: 85vh;
   width: 100%;
@@ -27,6 +25,8 @@ footer {
 
 /* components */
 #chatWindow {
+  overflow-y: scroll;
+  overflow-x: hidden;
   width: 100vw;
 }
 
@@ -50,13 +50,13 @@ footer {
 
 @media (min-width: 550px) {
   #chatWindow {
-    width: 75vw;
+    width: 100%;
   }
 
   #userWindow {
     display: block;
     overflow-x: hidden;
-    width: 25vw;
+    width: 150px;
   }
 }
 
