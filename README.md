@@ -13,10 +13,10 @@ Create a chat application using golang and websockets that supports multiple use
 - [✔] broadcast status messages
 - [✔] read message from user
 - [✔] broadcast message from user
-- [x] save user message to file
-- [x] read messages to new user writer on join
+- [❌] save user message to file
+- [❌] read messages to new user writer on join
 - [✔] client-side disconnect
-- [x] handle heartbeat
+- [❌] handle heartbeat
 - [✔] unique usernames
 ### ui
 - [✔] message box
@@ -25,7 +25,7 @@ Create a chat application using golang and websockets that supports multiple use
 - [✔] leave button
 - [✔] message input
 - [✔] state logic
-- [x] handle heartbeat
+- [❌] handle heartbeat
 
 ## Limitations, Caveats, Concerns
 
