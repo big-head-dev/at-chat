@@ -25,47 +25,39 @@ func newRoom() *Room {
 
 // goroutine to handle incoming users and incoming messages
 func (r Room) start() {
-	//TODO: save to file using defer for persistance?
 	for {
 		select {
 		case user := <-r.join:
 			r.users[user.username] = user
 			log.Println("Room.join - user added", user.username)
-			r.sendPreviousMessagesToUser(user.username)
-			r.broadcastStatus(newStatusMessage(fmt.Sprintf("%s has joined.", user.username)))
+			r.broadcastChatMessage(newStatusMessage(fmt.Sprintf("%s has joined.", user.username), r.getUsers()))
 		case user := <-r.leave:
 			if u, ok := r.users[user.username]; ok {
 				u.disconnect()
 				delete(r.users, u.username)
 				log.Println("Room.leave - user disconnected and removed", user.username)
-				r.broadcastStatus(newStatusMessage(fmt.Sprintf("%s has left.", u.username)))
+				r.broadcastChatMessage(newStatusMessage(fmt.Sprintf("%s has left.", u.username), r.getUsers()))
 			}
 		case message := <-r.incoming:
 			r.broadcastChatMessage(message)
-			r.saveMessage(message)
 		}
-	}
-}
-
-// sends status messages to all users
-func (r Room) broadcastStatus(m StatusMessage) {
-	for _, u := range r.users {
-		u.receiveStatusMessage(m)
 	}
 }
 
 // sends chat messages to all users
 func (r Room) broadcastChatMessage(m ChatMessage) {
 	for _, u := range r.users {
-		u.receiveChatMessage(m)
+		u.outgoing <- m
 	}
 }
 
-func (r Room) saveMessage(m ChatMessage) {
-	// log.Println("saveMessage")
-}
+func (r Room) getUsers() []string {
+	uns := make([]string, len(r.users))
 
-// sends saved chat messages to newly connected users
-func (r Room) sendPreviousMessagesToUser(username string) {
-	// log.Println("sendPreviousMessagesToUser")
+	i := 0
+	for un := range r.users {
+		uns[i] = un
+		i++
+	}
+	return uns
 }

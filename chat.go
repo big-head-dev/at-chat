@@ -34,7 +34,8 @@ func main() {
 		cookie, err := r.Cookie("atchat-username")
 		if err != nil {
 			log.Println("No 'atchat-username' cookie found ", err)
-			//TODO: send better denied response??
+			w.WriteHeader(http.StatusForbidden)
+			w.Write([]byte("Username required."))
 			return
 		}
 
@@ -48,12 +49,13 @@ func main() {
 		// deny already taken usernames
 		if _, ok := room.users[cookie.Value]; ok {
 			log.Println("Username already connected", cookie.Value)
+			conn.WriteJSON(newStatusMessage("A user with that name is already connected.", nil))
 			conn.Close()
 			return
 		}
 
 		//create user
-		user := &User{cookie.Value, conn, room}
+		user := &User{cookie.Value, conn, room, make(chan ChatMessage)}
 		go user.start()
 
 		//add to room

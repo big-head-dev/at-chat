@@ -5,10 +5,7 @@ const isSocketOpen = () => {
   return socket && socket.readyState == socket.OPEN
 }
 
-const sockOpenHandler = (e) => {
-  // pushMessage({time: "", username: "", message: "Connected..."})
-  // console.log(e)
-}
+const sockOpenHandler = (e) => {}
 const sockMessageHandler = (e) => {
   // handle message types and create messages in chatwindow
   const sockMessage = JSON.parse(e.data)
@@ -18,11 +15,6 @@ const sockMessageHandler = (e) => {
     case "status":
     case "chat":
       pushMessage(sockMessage)
-      break;
-    case "chats":
-      sockMessage.messages.forEach(message => {
-        pushMessage(message)
-      });
       break;
     default:
       //unknown message type
@@ -87,9 +79,6 @@ window.onload = () => {
     return
   }
 }
-// window.onbeforeunload = function () {
-//   leaveRoom()
-// }
 
 const flipInputPanels = (showMessagePanel) => {
   var messagePanel = document.getElementById('messsagePanel')
@@ -103,6 +92,8 @@ const flipInputPanels = (showMessagePanel) => {
   } else {
     messagePanel.classList.add('hidethis')
     joinPanel.classList.remove('hidethis')
+    //focus input
+    document.getElementById('usernameInput').focus()
   }
 }
 

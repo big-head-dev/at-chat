@@ -11,10 +11,12 @@ type User struct {
 	username string
 	ws       *websocket.Conn
 	r        *Room
+	outgoing chan ChatMessage
 }
 
 func (u User) start() {
 	defer u.disconnect()
+	go u.listen()
 	for {
 		t, p, err := u.ws.ReadMessage()
 		if err != nil {
@@ -32,19 +34,19 @@ func (u User) start() {
 	}
 }
 
+func (u User) listen() {
+	for {
+		select {
+		case message := <-u.outgoing:
+			log.Println(message)
+			if err := u.ws.WriteJSON(message); err != nil {
+				log.Println("Outgoing message error ", u.username, message, err)
+			}
+		}
+	}
+}
+
 // Closes socks connection
 func (u User) disconnect() {
 	u.ws.Close()
-}
-
-func (u User) receiveStatusMessage(m StatusMessage) {
-	if err := u.ws.WriteJSON(m); err != nil {
-		log.Println("User.receiveStatusMessage error ", u.username, err)
-	}
-}
-
-func (u User) receiveChatMessage(m ChatMessage) {
-	if err := u.ws.WriteJSON(m); err != nil {
-		log.Println("User.receiveChatMessage error ", u.username, err)
-	}
 }
