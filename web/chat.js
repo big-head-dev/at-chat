@@ -10,27 +10,37 @@ const sockMessageHandler = (e) => {
   // handle message types and create messages in chatwindow
   const sockMessage = JSON.parse(e.data)
   console.debug(sockMessage)
-  if(!sockMessage) return
+  if (!sockMessage) return
   switch (sockMessage.type) {
-    case "status":
-    case "chat":
+    case 'status':
+    case 'chat':
       pushMessage(sockMessage)
-      break;
+      if (sockMessage.users) {
+        updateUserList(sockMessage.users)
+      }
+      break
     default:
       //unknown message type
       console.log(e)
-      break;
+      break
   }
-  
 }
 const sockCloseHandler = (e) => {
   switch (e.code) {
     case 1000:
-      pushMessage({time: "", username: "", message: "You have left the chat room."})
-      break;
+      pushMessage({
+        time: '',
+        username: '',
+        message: 'You have left the chat room.',
+      })
+      break
     default:
-      pushMessage({time: "", username: "", message: "You have been disconnected from the chat room. " + e.code})
-      break;
+      pushMessage({
+        time: '',
+        username: '',
+        message: 'You have been disconnected from the chat room. ' + e.code,
+      })
+      break
   }
   // socket = null
   clearCookie()
@@ -55,6 +65,7 @@ const leaveRoom = () => {
   if (isSocketOpen()) {
     socket.close(1000, 'user leaving')
   }
+  clearUserList()
 }
 
 const sendMessage = (message) => {
@@ -75,9 +86,11 @@ const setCookie = (username) => {
 
 window.onload = () => {
   if (!window['WebSocket']) {
-    console.log('WebSockets not supported.')
+    pushMessage({ message: 'WebSockets not supported by this browser.' })
+    document.getElementById('joinButton').disabled = true
     return
   }
+  document.getElementById('usernameInput').focus()
 }
 
 const flipInputPanels = (showMessagePanel) => {
@@ -171,18 +184,43 @@ const createMessageHtml = (time, username, message) => {
 const clearChatWindow = () => {
   const chatWindow = document.getElementById('chatWindow')
   while (chatWindow.firstChild) {
-    chatWindow.removeChild(chatWindow.lastChild);
+    chatWindow.removeChild(chatWindow.lastChild)
+  }
+}
+
+const updateUserList = (users) => {
+  clearUserList()
+  const userList = document.getElementById('userList')
+  users.sort().forEach((user) => {
+    userList.appendChild(createUserLi(user))
+  })
+}
+
+const createUserLi = (username) => {
+  var userLi = document.createElement('li')
+  userLi.innerText = username
+  return userLi
+}
+
+const clearUserList = () => {
+  const userList = document.getElementById('userList')
+  while (userList.firstChild) {
+    userList.removeChild(userList.lastChild)
   }
 }
 
 // listeners
 
 const onEnterKey = (e, next) => {
-  if('Enter' === e.key) {
+  if ('Enter' === e.key) {
     next()
   }
   return
 }
 
-document.getElementById('usernameInput').addEventListener("keyup", e => onEnterKey(e, joinButtonClick))
-document.getElementById('messageInput').addEventListener('keyup', e => onEnterKey(e, sendButtonClick))
+document
+  .getElementById('usernameInput')
+  .addEventListener('keyup', (e) => onEnterKey(e, joinButtonClick))
+document
+  .getElementById('messageInput')
+  .addEventListener('keyup', (e) => onEnterKey(e, sendButtonClick))

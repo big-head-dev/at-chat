@@ -11,10 +11,12 @@ body {
 }
 
 main {
+  display: flex;
   overflow-y: scroll;
-  overflow-x: visible;
+  overflow-x: hidden;
   background-color: #9ca3af;
   height: 85vh;
+  width: 100%;
 }
 
 footer {
@@ -24,6 +26,39 @@ footer {
 }
 
 /* components */
+#chatWindow {
+  width: 100vw;
+}
+
+#userWindow {
+  display: none;
+  background-color: hsl(218, 11%, 55%);
+  border-left: 2px solid #4b5563;
+  padding: .5rem;
+}
+
+#userWindow h4 {
+  text-align: center;
+}
+
+#userWindow ul li {
+  padding: 0;
+  margin: 0;
+  list-style-type: none;
+  list-style-position: inside;
+}
+
+@media (min-width: 550px) {
+  #chatWindow {
+    width: 75vw;
+  }
+
+  #userWindow {
+    display: block;
+    overflow-x: hidden;
+    width: 25vw;
+  }
+}
 
 /* chat window messages  */
 .message {
@@ -157,7 +192,6 @@ button.bg-danger:focus {
 button.bg-danger:active {
   background-color: hsl(0, 84%, 80%);
 }
-
 
 .hidethis {
   display: none;

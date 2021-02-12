@@ -38,7 +38,6 @@ func (u User) listen() {
 	for {
 		select {
 		case message := <-u.outgoing:
-			log.Println(message)
 			if err := u.ws.WriteJSON(message); err != nil {
 				log.Println("Outgoing message error ", u.username, message, err)
 			}
